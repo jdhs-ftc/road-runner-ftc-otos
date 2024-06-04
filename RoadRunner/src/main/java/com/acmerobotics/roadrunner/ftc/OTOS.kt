@@ -34,3 +34,7 @@ class OtosEncoder(private val otos: SparkFunOTOS, private val useYDirection: Boo
 fun OTOSPoseToRRPose(otosPose: Pose2D): Pose2d {
     return Pose2d(otosPose.x,otosPose.y,otosPose.h)
 }
+
+fun RRPoseToOTOSPose(rrPose: Pose2d): Pose2D {
+    return Pose2D(rrPose.position.x,rrPose.position.y,rrPose.heading.toDouble())
+}
