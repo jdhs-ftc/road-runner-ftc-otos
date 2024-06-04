@@ -31,7 +31,7 @@ android {
 }
 
 node {
-    version = "18.12.1"
+    version = "17.9.1"
     download = true
     nodeModulesDir = file("${project.projectDir.parent}/web")
 }

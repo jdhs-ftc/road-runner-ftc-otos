@@ -79,7 +79,7 @@
 
 "@esbuild/linux-x64@0.18.20":
   version "0.18.20"
-  resolved "https://registry.yarnpkg.com/@esbuild/linux-x64/-/linux-x64-0.18.20.tgz#c7690b3417af318a9b6f96df3031a8865176d338"
+  resolved "https://registry.npmjs.org/@esbuild/linux-x64/-/linux-x64-0.18.20.tgz"
   integrity sha512-UYqiqemphJcNsFEskc73jQ7B9jgwjWrSayxawS6UVFZGWrAAtkzjxSqnoclCXxWtfwLdzU+vTpcNYhpn43uP1w==
 
 "@esbuild/netbsd-x64@0.18.20":
@@ -114,24 +114,24 @@
 
 "@types/plotly.js-dist-min@2.3.1":
   version "2.3.1"
-  resolved "https://registry.yarnpkg.com/@types/plotly.js-dist-min/-/plotly.js-dist-min-2.3.1.tgz#514745f5ddcfd25201b2c8d65fbc4f0497bd1d96"
+  resolved "https://registry.npmjs.org/@types/plotly.js-dist-min/-/plotly.js-dist-min-2.3.1.tgz"
   integrity sha512-9+rTvlyKDclIB9twal6ou6unUN6iTATLcRvakoFYaHGPnVRNe06LbUGOcgD8O+sddBFz3y2kS2hTKbUPGeVsHA==
   dependencies:
     "@types/plotly.js" "*"
 
 "@types/plotly.js@*":
   version "2.12.26"
-  resolved "https://registry.yarnpkg.com/@types/plotly.js/-/plotly.js-2.12.26.tgz#42c7b98a462645af56bdcb00349cf0beaae96fe1"
+  resolved "https://registry.npmjs.org/@types/plotly.js/-/plotly.js-2.12.26.tgz"
   integrity sha512-vP1iaVL4HHYSbugv49pwtLL6D9CSqOnQLjiRRdRYjVMEDbjIWhMgxc49BJAxSUShupiJHDp35e0WJS9SwIB2WA==
 
 "@types/regression@^2.0.2":
   version "2.0.2"
-  resolved "https://registry.yarnpkg.com/@types/regression/-/regression-2.0.2.tgz#a1ad747fbcc6726643a8eb2c42bb804bbf34ce02"
+  resolved "https://registry.npmjs.org/@types/regression/-/regression-2.0.2.tgz"
   integrity sha512-i7KOGl6xdkfpq5+p2ooC+/XFIRUMkYymZ29SD8p+Ko9lesKGUsh6860ey3YM7Y+ZG7kEDGcjzyLO3sOhozqEeA==
 
 esbuild@^0.18.10:
   version "0.18.20"
-  resolved "https://registry.yarnpkg.com/esbuild/-/esbuild-0.18.20.tgz#4709f5a34801b43b799ab7d6d82f7284a9b7a7a6"
+  resolved "https://registry.npmjs.org/esbuild/-/esbuild-0.18.20.tgz"
   integrity sha512-ceqxoedUrcayh7Y7ZX6NdbbDzGROiyVBgC4PriJThBKSVPWnnFHZAkfI1lJT8QFkOwH4qOS2SJkS4wvpGl8BpA==
   optionalDependencies:
     "@esbuild/android-arm" "0.18.20"
@@ -158,28 +158,28 @@ esbuild@^0.18.10:
     "@esbuild/win32-x64" "0.18.20"
 
 fsevents@~2.3.2:
-  version "2.3.2"
-  resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-2.3.2.tgz#8a526f78b8fdf4623b709e0b975c52c24c02fd1a"
-  integrity sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==
+  version "2.3.3"
+  resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-2.3.3.tgz#cac6407785d03675a2a5e1a5305c697b347d90d6"
+  integrity sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==
 
 nanoid@^3.3.6:
   version "3.3.6"
-  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.6.tgz#443380c856d6e9f9824267d960b4236ad583ea4c"
+  resolved "https://registry.npmjs.org/nanoid/-/nanoid-3.3.6.tgz"
   integrity sha512-BGcqMMJuToF7i1rt+2PWSNVnWIkGCU78jBG3RxO/bZlnZPK2Cmi2QaffxGO/2RvWi9sL+FAiRiXMgsyxQ1DIDA==
 
 picocolors@^1.0.0:
   version "1.0.0"
-  resolved "https://registry.yarnpkg.com/picocolors/-/picocolors-1.0.0.tgz#cb5bdc74ff3f51892236eaf79d68bc44564ab81c"
+  resolved "https://registry.npmjs.org/picocolors/-/picocolors-1.0.0.tgz"
   integrity sha512-1fygroTLlHu66zi26VoTDv8yRgm0Fccecssto+MhsZ0D/DGW2sm8E8AjW7NU5VVTRt5GxbeZ5qBuJr+HyLYkjQ==
 
 plotly.js-dist-min@2.3.1:
   version "2.3.1"
-  resolved "https://registry.yarnpkg.com/plotly.js-dist-min/-/plotly.js-dist-min-2.3.1.tgz#b8ddd7ddd3abf4ec06b7686d493d07c564de2241"
+  resolved "https://registry.npmjs.org/plotly.js-dist-min/-/plotly.js-dist-min-2.3.1.tgz"
   integrity sha512-Y5srb2izG/TO3KcWb2soAL6IP5/KZ3VS+hIr8skUgCVqtAK9CYzxjNS1fIzn4Y6OdcxoK3dbjqqPjmESOQga2g==
 
 postcss@^8.4.27:
   version "8.4.28"
-  resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.4.28.tgz#c6cc681ed00109072816e1557f889ef51cf950a5"
+  resolved "https://registry.npmjs.org/postcss/-/postcss-8.4.28.tgz"
   integrity sha512-Z7V5j0cq8oEKyejIKfpD8b4eBy9cwW2JWPk0+fB1HOAMsfHbnAXLLS+PfVWlzMSLQaWttKDt607I0XHmpE67Vw==
   dependencies:
     nanoid "^3.3.6"
@@ -188,29 +188,29 @@ postcss@^8.4.27:
 
 regression@^2.0.1:
   version "2.0.1"
-  resolved "https://registry.yarnpkg.com/regression/-/regression-2.0.1.tgz#8d29c3e8224a10850c35e337e85a8b2fac3b0c87"
+  resolved "https://registry.npmjs.org/regression/-/regression-2.0.1.tgz"
   integrity sha512-A4XYsc37dsBaNOgEjkJKzfJlE394IMmUPlI/p3TTI9u3T+2a+eox5Pr/CPUqF0eszeWZJPAc6QkroAhuUpWDJQ==
 
 rollup@^3.27.1:
   version "3.28.0"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-3.28.0.tgz#a3c70004b01934760c0cb8df717c7a1d932389a2"
+  resolved "https://registry.npmjs.org/rollup/-/rollup-3.28.0.tgz"
   integrity sha512-d7zhvo1OUY2SXSM6pfNjgD5+d0Nz87CUp4mt8l/GgVP3oBsPwzNvSzyu1me6BSG9JIgWNTVcafIXBIyM8yQ3yw==
   optionalDependencies:
     fsevents "~2.3.2"
 
 source-map-js@^1.0.2:
   version "1.0.2"
-  resolved "https://registry.yarnpkg.com/source-map-js/-/source-map-js-1.0.2.tgz#adbc361d9c62df380125e7f161f71c826f1e490c"
+  resolved "https://registry.npmjs.org/source-map-js/-/source-map-js-1.0.2.tgz"
   integrity sha512-R0XvVJ9WusLiqTCEiGCmICCMplcCkIwwR11mOSD9CR5u+IXYdiseeEuXCVAjS54zqwkLcPNnmU4OeJ6tUrWhDw==
 
 typescript@^5.1.6:
   version "5.1.6"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.1.6.tgz#02f8ac202b6dad2c0dd5e0913745b47a37998274"
+  resolved "https://registry.npmjs.org/typescript/-/typescript-5.1.6.tgz"
   integrity sha512-zaWCozRZ6DLEWAWFrVDz1H6FVXzUSfTy5FUMWsQlU8Ym5JP9eO4xkTIROFCQvhQf61z6O/G6ugw3SgAnvvm+HA==
 
 vite@^4.4.9:
   version "4.4.9"
-  resolved "https://registry.yarnpkg.com/vite/-/vite-4.4.9.tgz#1402423f1a2f8d66fd8d15e351127c7236d29d3d"
+  resolved "https://registry.npmjs.org/vite/-/vite-4.4.9.tgz"
   integrity sha512-2mbUn2LlUmNASWwSCNSJ/EG2HuSRTnVNaydp6vMCm5VIqJsjMfbIWtbH2kDuwUVW5mMUKKZvGPX/rqeqVvv1XA==
   dependencies:
     esbuild "^0.18.10"
