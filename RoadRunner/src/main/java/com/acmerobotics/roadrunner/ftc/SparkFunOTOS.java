@@ -722,6 +722,23 @@ public class SparkFunOTOS extends I2cDeviceSynchDevice {
     }
 
     /**
+     * Gets the position and velocity measured by the
+     * OTOS in a single burst read
+     * Fixed version of above function
+     * NOT IN THE REAL DRIVER, ADDED BY j5155, TODO PR
+     * @return list where first element is pose and second is velocity
+     * */
+    public Pose2D[] getPosVelCorrected() {
+        // Read all pose registers
+        byte[] rawData = deviceClient.read(REG_POS_XL, 12);
+        return new Pose2D[]{
+                // Convert raw data to pose units
+        regsToPose(Arrays.copyOfRange(rawData, 0, 6), INT16_TO_METER, INT16_TO_RAD),
+        regsToPose(Arrays.copyOfRange(rawData, 6, 12), INT16_TO_MPS, INT16_TO_RPS)
+        };
+    }
+
+    /**
      * Gets the standard deviation of the measured position, velocity,
      * and acceleration in a single burst read
      * @param pos Standard deviation of the position measured by the OTOS
