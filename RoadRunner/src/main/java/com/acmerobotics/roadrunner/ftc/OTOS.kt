@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorController
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 
-class OtosEncoder(private val otos: SparkFunOTOS, private val useYDirection: Boolean, private val anyDummyMotor: DcMotor) : Encoder {
+class OtosEncoder(private val otos: SparkFunOTOS, private val useYDirection: Boolean, private val reversed: Boolean, private val anyDummyMotor: DcMotor) : Encoder {
     override var direction: DcMotorSimple.Direction = DcMotorSimple.Direction.FORWARD
 
     override fun getPositionAndVelocity(): PositionVelocityPair {
@@ -19,12 +19,21 @@ class OtosEncoder(private val otos: SparkFunOTOS, private val useYDirection: Boo
             pos = otos.position.x
             vel = otos.velocity.x
         }
-        return PositionVelocityPair(
-            pos,
-            vel,
-            pos,
-            vel
-        )
+        if (reversed) {
+            return PositionVelocityPair(
+                -pos,
+                -vel,
+                -pos,
+                -vel
+            )
+        } else {
+            return PositionVelocityPair(
+                pos,
+                vel,
+                pos,
+                vel
+            )
+        }
     }
 
     override val controller: DcMotorController
