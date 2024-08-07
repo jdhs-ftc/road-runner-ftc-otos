@@ -77,6 +77,7 @@ dependencies {
     api "com.acmerobotics.dashboard:dashboard:$min_dash_version"
 
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.7'
+    implementation 'org.firstinspires.ftc:Hardware:9.2.0'
 
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.1'
