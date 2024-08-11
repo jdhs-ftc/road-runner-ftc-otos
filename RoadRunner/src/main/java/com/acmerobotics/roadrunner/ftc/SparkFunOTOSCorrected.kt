@@ -2,8 +2,15 @@ package com.acmerobotics.roadrunner.ftc
 
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch
+import com.qualcomm.robotcore.hardware.configuration.annotations.DeviceProperties
+import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType
 import java.util.*
-
+@I2cDeviceType
+@DeviceProperties(
+    name = "SparkFun OTOS Corrected",
+    xmlTag = "SparkFunOTOSCorrected",
+    description = "SparkFun Qwiic Optical Tracking Odometry Sensor Corrected"
+)
 class SparkFunOTOSCorrected(deviceClient: I2cDeviceSynch) : SparkFunOTOS(deviceClient) {
     /**
      * Gets only the position and velocity measured by the
