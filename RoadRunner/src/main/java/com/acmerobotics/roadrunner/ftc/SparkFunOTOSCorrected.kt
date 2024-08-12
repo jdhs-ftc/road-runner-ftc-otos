@@ -8,7 +8,7 @@ import java.util.*
 @I2cDeviceType
 @DeviceProperties(
     name = "SparkFun OTOS Corrected",
-    xmlTag = "SparkFunOTOSCorrected",
+    xmlTag = "SparkFunOTOS2",
     description = "SparkFun Qwiic Optical Tracking Odometry Sensor Corrected"
 )
 class SparkFunOTOSCorrected(deviceClient: I2cDeviceSynch) : SparkFunOTOS(deviceClient) {
