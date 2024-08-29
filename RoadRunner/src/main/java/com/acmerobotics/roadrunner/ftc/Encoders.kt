@@ -7,12 +7,8 @@ import com.qualcomm.robotcore.util.ElapsedTime
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.round
-import kotlin.math.roundToInt
 
 class PositionVelocityPair(
-    // previously these were typed as int
-    // changed to double to allow OTOS to work, given that it uses inch units
-    // might break everything
         @JvmField val position: Double, @JvmField val velocity: Double,
         @JvmField val rawPosition: Double, @JvmField val rawVelocity: Double
  )
@@ -101,12 +97,7 @@ class OverflowEncoder(@JvmField val encoder: RawEncoder) : Encoder {
 
         return PositionVelocityPair(
                 p.position,
-                // this conversion is extremely cursed
-                // this will cause very bad problems if for any reason velocity is not an int
-                // however the only time that happens is when you're using OTOS
-                // and when you're using OTOS you don't need to use overflowencoder
-                // so this might work
-                inverseOverflow(p.velocity.roundToInt(), v),
+            inverseOverflow(p.velocity.toInt(), v),
                 p.rawPosition,
                 p.rawVelocity,
         )
