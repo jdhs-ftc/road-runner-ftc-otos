@@ -3,6 +3,7 @@ buildscript {
     ext.min_rr_version = "1.0.0-beta6"
     ext.min_dash_version = "0.4.10"
     ext.rr_ftc_version = "0.1.13"
+    ext.otos_version = "0.1.0"
 }
 
 plugins {
@@ -132,14 +133,14 @@ project.afterEvaluate {
                 artifact androidSourcesJar
 //                artifact androidJavadocsJar
 
-                groupId = "com.acmerobotics.roadrunner"
+                groupId = "page.j5155.road-runner-otos"
                 artifactId = "ftc"
-                version rr_ftc_version
+                version "${rr_ftc_version}+${otos_version}"
 
                 pom {
-                    description = "FTC utilities for Road Runner"
-                    name = "Road Runner FTC"
-                    url = "https://github.com/rbrott/road-runner-ftc"
+                    description = "FTC utilities for Road Runner with support for SparkFun OTOS"
+                    name = "Road Runner FTC OTOS"
+                    url = "https://github.com/jdhs-ftc/road-runner-ftc-otos"
 
                     licenses {
                         license {
@@ -154,6 +155,11 @@ project.afterEvaluate {
                             id = "rbrott"
                             name = "Ryan Brott"
                             email = "rcbrott@gmail.com"
+                        }
+                        developer {
+                            id = "j5155"
+                            name = "j5155"
+                            email = "ftcjdhs@gmail.com"
                         }
                     }
 
