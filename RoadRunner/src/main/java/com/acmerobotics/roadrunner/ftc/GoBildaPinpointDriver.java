@@ -20,7 +20,7 @@
  *   SOFTWARE.
  */
 
-package com.acmerobotics.roadrunner.ftc.pinpoint;
+package com.acmerobotics.roadrunner.ftc;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.hardware.I2cAddr;

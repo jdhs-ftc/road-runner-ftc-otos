@@ -2,15 +2,7 @@ package com.acmerobotics.roadrunner.ftc
 
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
-import com.acmerobotics.roadrunner.MecanumKinematics
-import com.acmerobotics.roadrunner.MotorFeedforward
-import com.acmerobotics.roadrunner.PoseVelocity2d
-import com.acmerobotics.roadrunner.PoseVelocity2dDual
-import com.acmerobotics.roadrunner.TankKinematics
-import com.acmerobotics.roadrunner.Time
-import com.acmerobotics.roadrunner.TimeProfile
-import com.acmerobotics.roadrunner.Vector2d
-import com.acmerobotics.roadrunner.constantProfile
+import com.acmerobotics.roadrunner.*
 import com.google.gson.annotations.SerializedName
 import com.qualcomm.hardware.lynx.LynxDcMotorController
 import com.qualcomm.hardware.lynx.LynxModule
@@ -59,6 +51,7 @@ private fun unwrap(e: Encoder): Encoder =
             is OverflowEncoder -> e.encoder
             is RawEncoder -> e
             is OtosEncoder -> e
+            is PinpointEncoder -> e
         }
 
 fun interface FeedforwardFactory {
