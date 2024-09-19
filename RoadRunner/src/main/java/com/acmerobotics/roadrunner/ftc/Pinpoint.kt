@@ -13,13 +13,17 @@ class PinpointEncoder(
 ) : Encoder {
     override var direction: DcMotorSimple.Direction = DcMotorSimple.Direction.FORWARD
 
+    private var lastPos = 0.0;
+    private var lastTime = System.nanoTime();
+
+    // TODO: consider using robot centric pose& velocity instead??
+    // set yaw scalar to zero?
+    // https://discord.com/channels/225450307654647808/225451520911605765/1286457799798296669
     override fun getPositionAndVelocity(): PositionVelocityPair {
         pinpoint.bulkUpdate()
-        val pos: Double
+        var pos: Double // this is a var so the reversing logic works, though it seems kind of weird to me
         val vel: Double
-        // kotlin wraps getPosition here
-        // theoretically this could be worse if getPosition did a read, but it only checks the cached value from last bulk read
-        // so this is (currently) fine
+
         if (usePerpendicular) {
             // y = strafe = perpendicular
             // have to convert to inch units manually from millimeters
@@ -29,11 +33,33 @@ class PinpointEncoder(
             pos = DistanceUnit.INCH.fromMm((pinpoint.encoderX / pinpoint.currentTicksPerMM).toDouble())
         }
 
-        // yes, velocity.position is weird.
-        // it's returning a pose2d in inches/sec as vel rn
+        if (reversed) {
+            pos *= -1
+        }
+
+        if (lastPos == 0.0) {
+            lastPos = pos
+            vel = 0.0
+        } else {
+            // calculate velocity manually
+            // the pinpoint does not output velocity at all, unfortunately
+            // see https://discord.com/channels/225450307654647808/225451520911605765/1286454383978090549 and
+            // https://discord.com/channels/225450307654647808/1286099179617124386/1286316901479350272
+
+            // ideally we would filter this,
+            // but this should be fine for now, esp since this should barely be used anyway
+            // why I didn't filter it:
+            // https://discord.com/channels/225450307654647808/225451520911605765/1286453115868020798
+            // and https://discord.com/channels/225450307654647808/225451520911605765/1286453284667789362
+            val currentTime = System.nanoTime()
+            val timeDiffSec = (currentTime - lastTime) * 1e-9;
+            vel = (pos - lastPos) / timeDiffSec
+            lastPos = pos
+            lastTime = currentTime
+        }
         return PositionVelocityPair(pos, vel, pos, vel)
     }
 
-    override val controller: DcMotorController // i hate this
+    override val controller: DcMotorController // I hate this
         get() = anyDummyMotor.controller
 }
