@@ -58,8 +58,10 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynch> 
     private float yVelocity = 0;
     private float hVelocity = 0;
 
-    private static final float goBILDA_SWINGARM_POD = 13.26291192f; //ticks-per-mm for the goBILDA Swingarm Pod
-    private static final float goBILDA_4_BAR_POD = 19.89436789f; //ticks-per-mm for the goBILDA 4-Bar Pod
+    public float currentTicksPerMM = 0f;
+
+    public static final float goBILDA_SWINGARM_POD = 13.26291192f; //ticks-per-mm for the goBILDA Swingarm Pod
+    public static final float goBILDA_4_BAR_POD = 19.89436789f; //ticks-per-mm for the goBILDA 4-Bar Pod
 
 
     public GoBildaPinpointDriver(I2cDeviceSynch deviceClient, boolean deviceClientIsOwned) {
@@ -89,7 +91,7 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynch> 
         X_VELOCITY(11),
         Y_VELOCITY(12),
         H_VELOCITY(13),
-        MM_PER_TICK(14),
+        MM_PER_TICK(14), // TODO: should this be TICKS_PER_MM?
         X_POD_OFFSET(15),
         Y_POD_OFFSET(16),
         YAW_SCALAR(17),
@@ -294,9 +296,11 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynch> 
      */
     public void setEncoderResolution(GoBildaOdometryPods pods) {
         if (pods == GoBildaOdometryPods.goBILDA_SWINGARM_POD) {
+            currentTicksPerMM = goBILDA_SWINGARM_POD;
             writeByteArray(Register.MM_PER_TICK, (floatToByteArray(goBILDA_SWINGARM_POD, ByteOrder.LITTLE_ENDIAN)));
         }
         if (pods == GoBildaOdometryPods.goBILDA_4_BAR_POD) {
+            currentTicksPerMM = goBILDA_4_BAR_POD;
             writeByteArray(Register.MM_PER_TICK, (floatToByteArray(goBILDA_4_BAR_POD, ByteOrder.LITTLE_ENDIAN)));
         }
     }
@@ -307,6 +311,7 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynch> 
      * @param ticks_per_mm should be somewhere between 10 ticks/mm and 100 ticks/mm a goBILDA Swingarm pod is ~13.26291192
      */
     public void setEncoderResolution(double ticks_per_mm) {
+        currentTicksPerMM = (float) ticks_per_mm;
         writeByteArray(Register.MM_PER_TICK, (floatToByteArray((float) ticks_per_mm, ByteOrder.LITTLE_ENDIAN)));
     }
 
