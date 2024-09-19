@@ -2,15 +2,7 @@ package com.acmerobotics.roadrunner.ftc
 
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
-import com.acmerobotics.roadrunner.MecanumKinematics
-import com.acmerobotics.roadrunner.MotorFeedforward
-import com.acmerobotics.roadrunner.PoseVelocity2d
-import com.acmerobotics.roadrunner.PoseVelocity2dDual
-import com.acmerobotics.roadrunner.TankKinematics
-import com.acmerobotics.roadrunner.Time
-import com.acmerobotics.roadrunner.TimeProfile
-import com.acmerobotics.roadrunner.Vector2d
-import com.acmerobotics.roadrunner.constantProfile
+import com.acmerobotics.roadrunner.*
 import com.google.gson.annotations.SerializedName
 import com.qualcomm.hardware.lynx.LynxDcMotorController
 import com.qualcomm.hardware.lynx.LynxModule
@@ -256,16 +248,17 @@ class AngularRampLogger(val dvf: DriveViewFactory) : LinearOpMode() {
             }
 
             t.addSplit()
-            val av = view.imu.get().getRobotAngularVelocity(AngleUnit.RADIANS)
+            // Use degrees here to work around https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/1070
+            val av = view.imu.get().getRobotAngularVelocity(AngleUnit.DEGREES)
             val time = t.addSplit()
 
             data.angVels[0].times.add(time)
             data.angVels[1].times.add(time)
             data.angVels[2].times.add(time)
 
-            data.angVels[0].values.add(av.xRotationRate.toDouble())
-            data.angVels[1].values.add(av.yRotationRate.toDouble())
-            data.angVels[2].values.add(av.zRotationRate.toDouble())
+            data.angVels[0].values.add(Math.toRadians(av.xRotationRate.toDouble()))
+            data.angVels[1].values.add(Math.toRadians(av.yRotationRate.toDouble()))
+            data.angVels[2].values.add(Math.toRadians(av.zRotationRate.toDouble()))
         }
 
         for (m in view.motors) {
