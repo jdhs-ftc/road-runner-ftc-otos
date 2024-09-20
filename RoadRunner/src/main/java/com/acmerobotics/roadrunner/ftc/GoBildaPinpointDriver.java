@@ -23,6 +23,8 @@
 package com.acmerobotics.roadrunner.ftc;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynchDevice;
@@ -353,7 +355,7 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynch> 
     public Pose2d setPosition(Pose2d pos) {
         writeByteArray(Register.X_POSITION, (floatToByteArray((float) DistanceUnit.MM.fromUnit(DistanceUnit.INCH, pos.position.x), ByteOrder.LITTLE_ENDIAN)));
         writeByteArray(Register.Y_POSITION, (floatToByteArray((float) DistanceUnit.MM.fromUnit(DistanceUnit.INCH, pos.position.y), ByteOrder.LITTLE_ENDIAN)));
-        writeByteArray(Register.H_ORIENTATION, (floatToByteArray((float) pos.heading.toDouble(), ByteOrder.LITTLE_ENDIAN)));
+        writeByteArray(Register.H_ORIENTATION, (floatToByteArray((float) Math.toDegrees(pos.heading.toDouble()), ByteOrder.LITTLE_ENDIAN)));
         return pos;
     }
 
@@ -491,18 +493,19 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynch> 
         return new Pose2d(
                 DistanceUnit.INCH.fromUnit(DistanceUnit.MM, xPosition),
                 DistanceUnit.INCH.fromUnit(DistanceUnit.MM, yPosition),
-                hOrientation);
+                Math.toRadians(hOrientation));
     }
 
 
     /**
      * @return a Pose2D containing the estimated velocity of the robot, velocity is unit per second
      */
-    public Pose2d getVelocity() {
-        return new Pose2d(
+    public PoseVelocity2d getVelocity() {
+        return new PoseVelocity2d(
+                new Vector2d(
                 DistanceUnit.INCH.fromUnit(DistanceUnit.MM, xVelocity),
-                DistanceUnit.INCH.fromUnit(DistanceUnit.MM, yVelocity),
-                hVelocity);
+                        DistanceUnit.INCH.fromUnit(DistanceUnit.MM, yVelocity)),
+                Math.toRadians(hVelocity));
     }
 
 
