@@ -49,8 +49,7 @@ enum class DriveType {
 private fun unwrap(e: Encoder): Encoder =
         when (e) {
             is OverflowEncoder -> e.encoder
-            is RawEncoder -> e
-            is OtosEncoder -> e
+            else -> e
         }
 
 fun interface FeedforwardFactory {
