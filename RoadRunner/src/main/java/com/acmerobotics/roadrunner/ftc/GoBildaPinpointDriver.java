@@ -248,6 +248,34 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynch> 
     }
 
     /**
+     * Added by j5155
+     * Update only the pose to improve loop times
+     * Call INSTEAD of bulk update, but only if you are only reading pose
+     */
+    public void updatePoseOnly() {
+        byte[] bArr = deviceClient.read(Register.BULK_READ.bVal + 16, 12);
+        xPosition = byteArrayToFloat(Arrays.copyOfRange(bArr, 0, 4), ByteOrder.LITTLE_ENDIAN);
+        yPosition = byteArrayToFloat(Arrays.copyOfRange(bArr, 4, 8), ByteOrder.LITTLE_ENDIAN);
+        hOrientation = byteArrayToFloat(Arrays.copyOfRange(bArr, 8, 12), ByteOrder.LITTLE_ENDIAN);
+    }
+
+    /**
+     * Added by j5155
+     * Update the pose and velocity to improve loop times
+     * Call INSTEAD of bulk update, but only if you are only reading pose and velocity
+     */
+    public void updatePoseAndVelocity() {
+        byte[] bArr = deviceClient.read(Register.BULK_READ.bVal + 16, 24);
+        xPosition = byteArrayToFloat(Arrays.copyOfRange(bArr, 0, 4), ByteOrder.LITTLE_ENDIAN);
+        yPosition = byteArrayToFloat(Arrays.copyOfRange(bArr, 4, 8), ByteOrder.LITTLE_ENDIAN);
+        hOrientation = byteArrayToFloat(Arrays.copyOfRange(bArr, 8, 12), ByteOrder.LITTLE_ENDIAN);
+        xVelocity = byteArrayToFloat(Arrays.copyOfRange(bArr, 12, 16), ByteOrder.LITTLE_ENDIAN);
+        yVelocity = byteArrayToFloat(Arrays.copyOfRange(bArr, 16, 20), ByteOrder.LITTLE_ENDIAN);
+        hVelocity = byteArrayToFloat(Arrays.copyOfRange(bArr, 20, 24), ByteOrder.LITTLE_ENDIAN);
+
+    }
+
+    /**
      * Sets the odometry pod positions relative to the point that the odometry computer tracks around.<br><br>
      * The most common tracking position is the center of the robot. <br> <br>
      * The X pod offset refers to how far sideways (in mm) from the tracking point the X (forward) odometry pod is. Left of the center is a positive number, right of center is a negative number. <br>
@@ -487,9 +515,10 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynch> 
     }
 
     /**
-     * @return a Pose2D containing the estimated position of the robot
+     * Added by j5155
+     * @return a Roadrunner Pose2D containing the estimated position of the robot
      */
-    public Pose2d getPosition() {
+    public Pose2d getPositionRR() {
         return new Pose2d(
                 DistanceUnit.INCH.fromUnit(DistanceUnit.MM, xPosition),
                 DistanceUnit.INCH.fromUnit(DistanceUnit.MM, yPosition),
@@ -498,9 +527,10 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynch> 
 
 
     /**
-     * @return a Pose2D containing the estimated velocity of the robot, velocity is unit per second
+     * Added by j5155
+     * @return a Roadrunner PoseVelocity2D containing the estimated velocity of the robot, velocity is unit per second
      */
-    public PoseVelocity2d getVelocity() {
+    public PoseVelocity2d getVelocityRR() {
         return new PoseVelocity2d(
                 new Vector2d(
                 DistanceUnit.INCH.fromUnit(DistanceUnit.MM, xVelocity),

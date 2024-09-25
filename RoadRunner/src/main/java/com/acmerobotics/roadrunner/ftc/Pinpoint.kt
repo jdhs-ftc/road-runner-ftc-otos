@@ -1,11 +1,63 @@
 package com.acmerobotics.roadrunner.ftc
 
+import android.util.Log
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorController
 import com.qualcomm.robotcore.hardware.DcMotorSimple
+import com.qualcomm.robotcore.util.RobotLog
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 
 class PinpointEncoder(
+    private val pinpoint: GoBildaPinpointDriver,
+    private val usePerpendicular: Boolean,
+    private val anyDummyMotor: DcMotor
+) : Encoder {
+    init {
+        Log.println(Log.INFO, "PinpointEncoder", "init: Initializing pinpoint encoder in tuning mode")
+        Log.println(Log.INFO, "PinpointEncoder", "init: Old yaw scalar = " + pinpoint.yawScalar)
+        Log.println(Log.WARN, "PinpointEncoder", "init: Setting Pinpoint yaw scalar to 0. Perform power cycle to reset")
+        RobotLog.addGlobalWarningMessage(
+            "Setting Pinpoint yaw scalar to 0 for tuning purposes (previously %f)." +
+                    " Perform a power cycle to reset it before running Feedback Tuner",
+            pinpoint.yawScalar
+        )
+        // Makes the output from the pinpoint robot centric
+        // Officially recommended by Gobilda:
+        // https://discord.com/channels/225450307654647808/225451520911605765/1286457799798296669
+        pinpoint.setYawScalar(0.0)
+    }
+
+    override var direction: DcMotorSimple.Direction = DcMotorSimple.Direction.FORWARD
+
+    override fun getPositionAndVelocity(): PositionVelocityPair {
+        // this will run twice when accessing both directions, which isn't ideal for loop times
+        // however all tuners only use it once so it's fine
+        pinpoint.updatePoseAndVelocity()
+        val pos: Double
+        val vel: Double
+
+        if (usePerpendicular) {
+            // y = strafe = perpendicular
+            pos = pinpoint.positionRR.position.y
+            vel = pinpoint.velocityRR.linearVel.y
+        } else {
+            pos = pinpoint.positionRR.position.x
+            vel = pinpoint.velocityRR.linearVel.x
+        }
+        return PositionVelocityPair(pos, vel, pos, vel)
+    }
+
+    override val controller: DcMotorController // I hate this
+        get() = anyDummyMotor.controller
+}
+
+/**
+ * Passes through the raw encoder values of the Pinpoint (after converting to inches)
+ * Also calculates speed manually
+ * This allows you to access raw encoder values while also running the pinpoint in field centric mode
+ * Basically only for cross comparing 2 wheel and pinpoint, NOT RECOMMENDED for any other use
+ */
+class PinpointRawPassthroughEncoder(
     private val pinpoint: GoBildaPinpointDriver,
     private val usePerpendicular: Boolean,
     private val reversed: Boolean,
