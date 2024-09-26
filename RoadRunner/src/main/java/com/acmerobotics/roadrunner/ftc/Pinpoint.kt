@@ -25,6 +25,7 @@ class PinpointEncoder(
         // Officially recommended by Gobilda:
         // https://discord.com/channels/225450307654647808/225451520911605765/1286457799798296669
         pinpoint.setYawScalar(0.0)
+        pinpoint.resetPosAndIMU()
     }
 
     override var direction: DcMotorSimple.Direction = DcMotorSimple.Direction.FORWARD
