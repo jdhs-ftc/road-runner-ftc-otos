@@ -253,7 +253,7 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynch> 
      * Call INSTEAD of bulk update, but only if you are only reading pose
      */
     public void updatePoseOnly() {
-        byte[] bArr = deviceClient.read(Register.BULK_READ.bVal + 16, 12);
+        byte[] bArr = deviceClient.read(Register.BULK_READ.bVal + 15, 12);
         xPosition = byteArrayToFloat(Arrays.copyOfRange(bArr, 0, 4), ByteOrder.LITTLE_ENDIAN);
         yPosition = byteArrayToFloat(Arrays.copyOfRange(bArr, 4, 8), ByteOrder.LITTLE_ENDIAN);
         hOrientation = byteArrayToFloat(Arrays.copyOfRange(bArr, 8, 12), ByteOrder.LITTLE_ENDIAN);
@@ -265,7 +265,7 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynch> 
      * Call INSTEAD of bulk update, but only if you are only reading pose and velocity
      */
     public void updatePoseAndVelocity() {
-        byte[] bArr = deviceClient.read(Register.BULK_READ.bVal + 16, 24);
+        byte[] bArr = deviceClient.read(Register.BULK_READ.bVal + 15, 24);
         xPosition = byteArrayToFloat(Arrays.copyOfRange(bArr, 0, 4), ByteOrder.LITTLE_ENDIAN);
         yPosition = byteArrayToFloat(Arrays.copyOfRange(bArr, 4, 8), ByteOrder.LITTLE_ENDIAN);
         hOrientation = byteArrayToFloat(Arrays.copyOfRange(bArr, 8, 12), ByteOrder.LITTLE_ENDIAN);
