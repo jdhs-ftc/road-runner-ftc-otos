@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.RobotLog
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 
 class PinpointEncoder(
-    private val pinpoint: GoBildaPinpointDriver,
+    private val pinpoint: GoBildaPinpointDriverRR,
     private val usePerpendicular: Boolean,
     private val anyDummyMotor: DcMotor
 ) : Encoder {
@@ -33,7 +33,7 @@ class PinpointEncoder(
     override fun getPositionAndVelocity(): PositionVelocityPair {
         // this will run twice when accessing both directions, which isn't ideal for loop times
         // however all tuners only use it once so it's fine
-        pinpoint.updatePoseAndVelocity()
+        pinpoint.update()
         val pos: Double
         val vel: Double
 
@@ -59,10 +59,11 @@ class PinpointEncoder(
  * Basically only for cross comparing 2 wheel and pinpoint, NOT RECOMMENDED for any other use
  */
 class PinpointRawPassthroughEncoder(
-    private val pinpoint: GoBildaPinpointDriver,
+    private val pinpoint: GoBildaPinpointDriverRR,
     private val usePerpendicular: Boolean,
     private val reversed: Boolean,
-    private val anyDummyMotor: DcMotor
+    private val anyDummyMotor: DcMotor,
+    private val autoUpdate: Boolean,
 ) : Encoder {
     override var direction: DcMotorSimple.Direction = DcMotorSimple.Direction.FORWARD
 
@@ -73,7 +74,9 @@ class PinpointRawPassthroughEncoder(
     // set yaw scalar to zero?
     // https://discord.com/channels/225450307654647808/225451520911605765/1286457799798296669
     override fun getPositionAndVelocity(): PositionVelocityPair {
-        pinpoint.bulkUpdate()
+        if (autoUpdate) {
+            pinpoint.update()
+        }
         var pos: Double // this is a var so the reversing logic works, though it seems kind of weird to me
         val vel: Double
 
