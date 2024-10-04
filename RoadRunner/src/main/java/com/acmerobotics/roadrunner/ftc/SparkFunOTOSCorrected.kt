@@ -1,17 +1,26 @@
 package com.acmerobotics.roadrunner.ftc
 
-import com.qualcomm.hardware.sparkfun.SparkFunOTOS
-import com.qualcomm.robotcore.hardware.I2cDeviceSynch
+import com.qualcomm.hardware.lynx.LynxI2cDeviceSynch
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D
+import com.qualcomm.robotcore.hardware.I2cDeviceSynchSimple
 import com.qualcomm.robotcore.hardware.configuration.annotations.DeviceProperties
 import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType
 import java.util.*
+
+
 @I2cDeviceType
 @DeviceProperties(
     name = "SparkFun OTOS Corrected",
     xmlTag = "SparkFunOTOS2",
     description = "SparkFun Qwiic Optical Tracking Odometry Sensor Corrected"
 )
-class SparkFunOTOSCorrected(deviceClient: I2cDeviceSynch) : SparkFunOTOS(deviceClient) {
+class SparkFunOTOSCorrected(deviceClient: I2cDeviceSynchSimple) : SparkFunOTOS(deviceClient) {
+
+    @Synchronized
+    override fun doInitialize(): Boolean {
+        ((deviceClient) as LynxI2cDeviceSynch).setBusSpeed(LynxI2cDeviceSynch.BusSpeed.FAST_400K)
+        return super.doInitialize()
+    }
     /**
      * Gets only the position and velocity measured by the
      * OTOS in a single burst read
