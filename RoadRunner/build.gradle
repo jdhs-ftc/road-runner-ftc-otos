@@ -54,10 +54,10 @@ task copyWebAssets(type: Copy) {
     from "${project.projectDir.parent}/web/dist"
     into "${android.sourceSets.getByName("main").assets.srcDirs[0]}/web"
 }
-
+/*
 copyWebAssets.dependsOn cleanWebAssets
 copyWebAssets.dependsOn yarn_build
-
+*/
 android.libraryVariants.all { variant ->
     variant.preBuildProvider.get().dependsOn copyWebAssets
 }
@@ -82,6 +82,7 @@ dependencies {
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1"
 }
 
 def addPomDependencies(root) {
