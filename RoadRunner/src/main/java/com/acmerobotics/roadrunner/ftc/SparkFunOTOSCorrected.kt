@@ -1,33 +1,43 @@
 package com.acmerobotics.roadrunner.ftc
 
+import com.qualcomm.hardware.lynx.LynxI2cDeviceSynch
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch
+import com.qualcomm.robotcore.hardware.IMU
 import com.qualcomm.robotcore.hardware.configuration.annotations.DeviceProperties
 import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType
-import java.util.*
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
+import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation
+import org.firstinspires.ftc.robotcore.external.navigation.Quaternion
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles
+
 @I2cDeviceType
 @DeviceProperties(
     name = "SparkFun OTOS Corrected",
     xmlTag = "SparkFunOTOS2",
     description = "SparkFun Qwiic Optical Tracking Odometry Sensor Corrected"
 )
-class SparkFunOTOSCorrected(deviceClient: I2cDeviceSynch) : SparkFunOTOS(deviceClient) {
+class SparkFunOTOSCorrected(deviceClient: I2cDeviceSynch) : SparkFunOTOS(deviceClient), IMU {
     /**
      * Gets only the position and velocity measured by the
      * OTOS in a single burst read
      * @param pos Position measured by the OTOS
      * @param vel Velocity measured by the OTOS
      */
+    @Suppress("unused")
     fun getPosVel(pos: Pose2D, vel: Pose2D) {
         // Read all pose registers
         val rawData = deviceClient.read(REG_POS_XL.toInt(), 12)
 
         // Convert raw data to pose units
-        pos.set(regsToPose(Arrays.copyOfRange(rawData, 0, 6), INT16_TO_METER, INT16_TO_RAD))
-        vel.set(regsToPose(Arrays.copyOfRange(rawData, 6, 12), INT16_TO_MPS, INT16_TO_RPS))
+        pos.set(regsToPose(rawData.copyOfRange(0, 6), INT16_TO_METER, INT16_TO_RAD))
+        vel.set(regsToPose(rawData.copyOfRange(6, 12), INT16_TO_MPS, INT16_TO_RPS))
     }
 
-    // Modified version of poseToRegs to fix pose setting issue
+    // Modified version of poseToRegs to fix the pose setting issue
     // see https://discord.com/channels/225450307654647808/1246977443030368349/1271702497659977760
     override fun poseToRegs(rawData: ByteArray, pose: Pose2D, xyToRaw: Double, hToRaw: Double) {
         // Convert pose units to raw data
@@ -42,5 +52,63 @@ class SparkFunOTOSCorrected(deviceClient: I2cDeviceSynch) : SparkFunOTOS(deviceC
         rawData[3] = ((rawY.toInt() shr 8) and 0xFF).toByte()
         rawData[4] = (rawH.toInt() and 0xFF).toByte()
         rawData[5] = ((rawH.toInt() shr 8) and 0xFF).toByte()
+    }
+
+
+    override fun doInitialize(): Boolean {
+        (deviceClient as LynxI2cDeviceSynch).setBusSpeed(LynxI2cDeviceSynch.BusSpeed.FAST_400K);
+        return super.doInitialize();
+    }
+
+
+    // IMU implementation
+
+    /**
+     * DOES NOTHING
+     */
+    override fun initialize(parameters: IMU.Parameters): Boolean {
+        return true
+    }
+
+    /**
+     * Resets the yaw to 0
+     * By writing a heading of 0 to the OTOS
+     * Note: this will perform a hardware write, and will set heading to 0 in the context of
+     * movement as well
+     */
+    override fun resetYaw() {
+        val curPos = position
+        position = Pose2D(curPos.x, curPos.y, 0.0)
+    }
+
+    override fun getRobotYawPitchRollAngles(): YawPitchRollAngles {
+        return YawPitchRollAngles(angularUnit, position.h, 0.0, 0.0, System.nanoTime())
+    }
+
+    override fun getRobotOrientation(
+        reference: AxesReference,
+        order: AxesOrder,
+        angleUnit: AngleUnit
+    ): Orientation {
+        return Orientation(
+            AxesReference.EXTRINSIC,
+            AxesOrder.XYZ,
+            angularUnit,
+            0f,
+            0f,
+            position.h.toFloat(),
+            System.nanoTime()
+        )
+            .toAxesReference(reference)
+            .toAxesOrder(order)
+            .toAngleUnit(angleUnit)
+    }
+
+    override fun getRobotOrientationAsQuaternion(): Quaternion {
+        return eulerToQuaternion(position.h)
+    }
+
+    override fun getRobotAngularVelocity(angleUnit: AngleUnit): AngularVelocity {
+        return AngularVelocity(angularUnit, 0.0f, 0.0f, velocity.h.toFloat(), System.nanoTime()).toAngleUnit(angleUnit)
     }
 }
