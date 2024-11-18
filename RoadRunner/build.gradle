@@ -3,6 +3,7 @@ buildscript {
     ext.min_rr_version = "1.0.0-beta6"
     ext.min_dash_version = "0.4.10"
     ext.rr_ftc_version = "0.1.14"
+    ext.otos_version = "0.1.0"
 }
 
 plugins {
@@ -54,10 +55,10 @@ task copyWebAssets(type: Copy) {
     from "${project.projectDir.parent}/web/dist"
     into "${android.sourceSets.getByName("main").assets.srcDirs[0]}/web"
 }
-/*
+
 copyWebAssets.dependsOn cleanWebAssets
 copyWebAssets.dependsOn yarn_build
-*/
+
 android.libraryVariants.all { variant ->
     variant.preBuildProvider.get().dependsOn copyWebAssets
 }
@@ -77,12 +78,11 @@ dependencies {
     api "com.acmerobotics.dashboard:dashboard:$min_dash_version"
 
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.7'
-    implementation 'org.firstinspires.ftc:Hardware:9.2.0'
+    implementation "org.firstinspires.ftc:Hardware:$min_sdk_version"
 
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1"
 }
 
 def addPomDependencies(root) {
@@ -127,20 +127,38 @@ task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
 
 project.afterEvaluate {
     publishing {
+        repositories {
+            maven {
+                name = "dairyReleases"
+                url = uri("https://repo.dairy.foundation/releases")
+                credentials(PasswordCredentials)
+                authentication {
+                    basic(BasicAuthentication)
+                }
+            }
+            maven {
+                name = "dairySnapshots"
+                url = uri("https://repo.dairy.foundation/snapshots")
+                credentials(PasswordCredentials)
+                authentication {
+                    basic(BasicAuthentication)
+                }
+            }
+        }
         publications {
             maven(MavenPublication) {
                 artifact bundleReleaseAar
                 artifact androidSourcesJar
 //                artifact androidJavadocsJar
 
-                groupId = "com.acmerobotics.roadrunner"
-                artifactId = "ftc"
-                version rr_ftc_version
+                groupId = "page.j5155.roadrunner"
+                artifactId = "ftc-otos"
+                version "$otos_version+$rr_ftc_version"
 
                 pom {
-                    description = "FTC utilities for Road Runner"
-                    name = "Road Runner FTC"
-                    url = "https://github.com/rbrott/road-runner-ftc"
+                    description = "FTC utilities for Road Runner w/ OTOS and Pinpoint support"
+                    name = "Road Runner FTC OTOS"
+                    url = "https://github.com/jdhs-ftc/road-runner-ftc-otos"
 
                     licenses {
                         license {
@@ -156,10 +174,15 @@ project.afterEvaluate {
                             name = "Ryan Brott"
                             email = "rcbrott@gmail.com"
                         }
+                        developer {
+                            id = "j5155"
+                            name = "j5155"
+                            email = "jdhs-ftc@gmail.com"
+                        }
                     }
 
                     scm {
-                        url = "https://github.com/rbrott/road-runner-ftc"
+                        url = "https://github.com/jdhs-ftc/road-runner-ftc-otos"
                     }
                 }
 
