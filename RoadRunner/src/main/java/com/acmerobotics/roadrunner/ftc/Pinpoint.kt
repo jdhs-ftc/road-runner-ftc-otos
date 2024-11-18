@@ -17,7 +17,7 @@ class PinpointEncoder(
         Log.println(Log.INFO, "PinpointEncoder", "init: Old yaw scalar = " + pinpoint.yawScalar)
         Log.println(Log.WARN, "PinpointEncoder", "init: Setting Pinpoint yaw scalar to 0. Perform power cycle to reset")
         RobotLog.addGlobalWarningMessage(
-            "Disabling Pinpoint IMU. Perform a power cycle to reset it before running Feedback Tuner, LocalizationTest, or an auto (Angular Scalar now 0, previously %f)",
+            "Disabling Pinpoint IMU. Perform a power cycle (turn the robot off and back on again) to reset it before running Feedback Tuner, LocalizationTest, or an auto (Angular Scalar now 0, previously %f)",
             pinpoint.yawScalar
         )
         // Makes the output from the pinpoint robot centric
