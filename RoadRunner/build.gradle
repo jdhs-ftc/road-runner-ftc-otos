@@ -38,6 +38,13 @@ node {
 }
 
 yarn_build {
+    inputs.files(fileTree("${project.projectDir.parent}/web/node_modules"))
+    inputs.files(fileTree("${project.projectDir.parent}/web/tuning"))
+    inputs.files(fileTree("${project.projectDir.parent}/web/package.json"))
+
+    outputs.dir(file("${project.projectDir.parent}/web/dist"))
+
+
     environment = [
             "VITE_APP_VERSION": rr_ftc_version
     ]
