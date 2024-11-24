@@ -12,6 +12,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation
 import org.firstinspires.ftc.robotcore.external.navigation.Quaternion
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles
+import java.util.Arrays
+import kotlin.math.cos
+import kotlin.math.sin
 
 @I2cDeviceType
 @DeviceProperties(
@@ -32,8 +35,8 @@ class SparkFunOTOSCorrected(deviceClient: I2cDeviceSynch) : SparkFunOTOS(deviceC
         val rawData = deviceClient.read(REG_POS_XL.toInt(), 12)
 
         // Convert raw data to pose units
-        pos.set(regsToPose(rawData.copyOfRange(0, 6), INT16_TO_METER, INT16_TO_RAD))
-        vel.set(regsToPose(rawData.copyOfRange(6, 12), INT16_TO_MPS, INT16_TO_RPS))
+        pos.set(regsToPose(Arrays.copyOfRange(rawData, 0, 6), INT16_TO_METER, INT16_TO_RAD))
+        vel.set(regsToPose(Arrays.copyOfRange(rawData, 6, 12), INT16_TO_MPS, INT16_TO_RPS))
     }
 
     // Modified version of poseToRegs to fix the pose setting issue
@@ -85,4 +88,14 @@ class SparkFunOTOSCorrected(deviceClient: I2cDeviceSynch) : SparkFunOTOS(deviceC
     override fun getRobotAngularVelocity(angleUnit: AngleUnit): AngularVelocity {
         return AngularVelocity(angularUnit, 0.0f,0.0f,velocity.h.toFloat(),System.nanoTime()).toAngleUnit(angleUnit)
     }
+}
+
+// https://math.stackexchange.com/questions/2975109/how-to-convert-euler-angles-to-quaternions-and-get-the-same-euler-angles-back-fr
+// UNTESTED
+fun eulerToQuaternion(yaw: Double): Quaternion {
+    val qx = cos(yaw / 2) - sin(yaw / 2)
+    val qy = cos(yaw / 2) + sin(yaw / 2)
+    val qz = sin(yaw / 2) - cos(yaw / 2)
+    val qw = cos(yaw / 2) + sin(yaw / 2)
+    return Quaternion(qw.toFloat(), qx.toFloat(), qy.toFloat(), qz.toFloat(), System.nanoTime())
 }
