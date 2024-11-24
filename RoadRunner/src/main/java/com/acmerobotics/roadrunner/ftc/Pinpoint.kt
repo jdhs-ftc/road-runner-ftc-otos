@@ -7,7 +7,41 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.util.RobotLog
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 
-class PinpointEncoder(
+class PinpointEncoder( // TODO test
+    private val pinpoint: GoBildaPinpointDriverRR,
+    private val usePerpendicular: Boolean,
+    private val anyDummyMotor: DcMotor
+) : Encoder {
+
+    override var direction: DcMotorSimple.Direction = DcMotorSimple.Direction.FORWARD
+
+    override fun getPositionAndVelocity(): PositionVelocityPair {
+        // this will run twice when accessing both directions, which isn't ideal for loop times
+        // however all tuners only use it once so it's fine
+        pinpoint.update()
+        val absPose = pinpoint.positionRR
+        val absVel = pinpoint.velocityRR
+        val rotatedPosVector = absPose.heading.times(absPose.position)
+        val rotatedVelVector = absPose.heading.times(absVel.linearVel)
+        val pos: Double
+        val vel: Double
+
+        if (usePerpendicular) {
+            // y = strafe = perpendicular
+            pos = rotatedPosVector.y
+            vel = rotatedVelVector.y
+        } else {
+            pos = rotatedPosVector.x
+            vel = rotatedVelVector.x
+        }
+        return PositionVelocityPair(pos, vel, pos, vel)
+    }
+
+    override val controller: DcMotorController // I hate this
+        get() = anyDummyMotor.controller
+}
+
+class PinpointZeroYawEncoder(
     private val pinpoint: GoBildaPinpointDriverRR,
     private val usePerpendicular: Boolean,
     private val anyDummyMotor: DcMotor
