@@ -23,14 +23,22 @@ package com.acmerobotics.roadrunner.ftc
 
 import com.acmerobotics.roadrunner.Pose2d
 import com.acmerobotics.roadrunner.PoseVelocity2d
+import com.acmerobotics.roadrunner.Rotation2d
 import com.acmerobotics.roadrunner.Vector2d
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriver.GoBildaOdometryPods
 import com.qualcomm.robotcore.hardware.I2cDeviceSynchSimple
+import com.qualcomm.robotcore.hardware.IMU
 import com.qualcomm.robotcore.hardware.configuration.annotations.DeviceProperties
 import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
+import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D
+import org.firstinspires.ftc.robotcore.external.navigation.Quaternion
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles
 
 @I2cDeviceType
 @DeviceProperties(
@@ -39,7 +47,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D
     description = "goBILDA® Pinpoint Odometry Computer (IMU Sensor Fusion for 2 Wheel Odometry)"
 )
 class GoBildaPinpointDriverRR(deviceClient: I2cDeviceSynchSimple, deviceClientIsOwned: Boolean) :
-    GoBildaPinpointDriver(deviceClient, deviceClientIsOwned) {
+    GoBildaPinpointDriver(deviceClient, deviceClientIsOwned), IMU {
     var currentTicksPerMM = 0f
 
     companion object {
@@ -157,6 +165,65 @@ class GoBildaPinpointDriverRR(deviceClient: I2cDeviceSynchSimple, deviceClientIs
             ),
             velocity.getHeading(AngleUnit.RADIANS)
         )
+
+
+    // IMU implementation (untested)
+
+    /**
+     * Does nothing
+     *
+     */
+    override fun initialize(parameters: IMU.Parameters): Boolean {
+        return true
+    }
+
+    override fun resetYaw() {
+        val curPos = positionRR
+        positionRR = Pose2d(curPos.position, Rotation2d.fromDouble(0.0))
+    }
+
+    override fun getRobotYawPitchRollAngles(): YawPitchRollAngles {
+        return YawPitchRollAngles(
+            AngleUnit.RADIANS,
+            position.getHeading(AngleUnit.RADIANS),
+            0.0,
+            0.0,
+            System.nanoTime()
+        )
+    }
+
+    override fun getRobotOrientation(
+        reference: AxesReference,
+        order: AxesOrder,
+        angleUnit: AngleUnit
+    ): Orientation {
+        return Orientation(
+            AxesReference.EXTRINSIC,
+            AxesOrder.XYZ,
+            AngleUnit.RADIANS,
+            0f,
+            0f,
+            position.getHeading(AngleUnit.RADIANS).toFloat(),
+            System.nanoTime()
+        )
+            .toAxesReference(reference)
+            .toAxesOrder(order)
+            .toAngleUnit(angleUnit)
+    }
+
+    override fun getRobotOrientationAsQuaternion(): Quaternion {
+        return eulerToQuaternion(position.getHeading(AngleUnit.RADIANS))
+    }
+
+    override fun getRobotAngularVelocity(angleUnit: AngleUnit): AngularVelocity {
+        return AngularVelocity(
+            AngleUnit.RADIANS,
+            0.0f,
+            0.0f,
+            velocity.getHeading(AngleUnit.RADIANS).toFloat(),
+            System.nanoTime()
+        ).toAngleUnit(angleUnit)
+    }
 }
 
 
