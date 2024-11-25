@@ -19,81 +19,84 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *   SOFTWARE.
  */
+package com.acmerobotics.roadrunner.ftc
 
-package com.acmerobotics.roadrunner.ftc;
-
-import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.PoseVelocity2d;
-import com.acmerobotics.roadrunner.Vector2d;
-import com.qualcomm.robotcore.hardware.I2cDeviceSynchSimple;
-import com.qualcomm.robotcore.hardware.configuration.annotations.DeviceProperties;
-import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-
+import com.acmerobotics.roadrunner.Pose2d
+import com.acmerobotics.roadrunner.PoseVelocity2d
+import com.acmerobotics.roadrunner.Vector2d
+import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriver.GoBildaOdometryPods
+import com.qualcomm.robotcore.hardware.I2cDeviceSynchSimple
+import com.qualcomm.robotcore.hardware.configuration.annotations.DeviceProperties
+import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D
 
 @I2cDeviceType
 @DeviceProperties(
-        name = "goBILDA® Pinpoint Odometry Computer Roadrunner Driver",
-        xmlTag = "goBILDAPinpointRR",
-        description = "goBILDA® Pinpoint Odometry Computer (IMU Sensor Fusion for 2 Wheel Odometry)"
+    name = "goBILDA® Pinpoint Odometry Computer Roadrunner Driver",
+    xmlTag = "goBILDAPinpointRR",
+    description = "goBILDA® Pinpoint Odometry Computer (IMU Sensor Fusion for 2 Wheel Odometry)"
 )
+class GoBildaPinpointDriverRR(deviceClient: I2cDeviceSynchSimple, deviceClientIsOwned: Boolean) :
+    GoBildaPinpointDriver(deviceClient, deviceClientIsOwned) {
+    var currentTicksPerMM = 0f
 
-public class GoBildaPinpointDriverRR extends GoBildaPinpointDriver {
-
-
-    public float currentTicksPerMM = 0f;
-
-    public static final float goBILDA_SWINGARM_POD = 13.26291192f; //ticks-per-mm for the goBILDA Swingarm Pod
-    public static final float goBILDA_4_BAR_POD = 19.89436789f; //ticks-per-mm for the goBILDA 4-Bar Pod
-
-
-    public GoBildaPinpointDriverRR(I2cDeviceSynchSimple deviceClient, boolean deviceClientIsOwned) {
-        super(deviceClient, deviceClientIsOwned);
+    companion object {
+        const val goBILDA_SWINGARM_POD = 13.26291192f //ticks-per-mm for the goBILDA Swingarm Pod
+        const val goBILDA_4_BAR_POD = 19.89436789f //ticks-per-mm for the goBILDA 4-Bar Pod
     }
 
-
     /**
-     * If you're using goBILDA odometry pods, the ticks-per-mm values are stored here for easy access.<br><br>
+     * If you're using goBILDA odometry pods, the ticks-per-mm values are stored here for easy access.
      *
      * @param pods goBILDA_SWINGARM_POD or goBILDA_4_BAR_POD
      */
-    public void setEncoderResolution(GoBildaOdometryPods pods) {
-        super.setEncoderResolution(pods);
-        if (pods == GoBildaOdometryPods.goBILDA_SWINGARM_POD) {
-            currentTicksPerMM = goBILDA_SWINGARM_POD;
-        }
-        if (pods == GoBildaOdometryPods.goBILDA_4_BAR_POD) {
-            currentTicksPerMM = goBILDA_4_BAR_POD;
-        }
+    override fun setEncoderResolution(pods: GoBildaOdometryPods) {
+        super.setEncoderResolution(pods)
+        currentTicksPerMM =
+            if (pods == GoBildaOdometryPods.goBILDA_SWINGARM_POD) {
+                goBILDA_SWINGARM_POD
+            } else if (pods == GoBildaOdometryPods.goBILDA_4_BAR_POD) {
+                goBILDA_4_BAR_POD
+            } else {
+                throw NotImplementedError("This odometry type not implemented in Roadrunner Pinpoint Integration")
+            }
     }
 
     /**
-     * Sets the encoder resolution in ticks per mm of the odometry pods. <br>
+     * Sets the encoder resolution in ticks per mm of the odometry pods. <br></br>
      * You can find this number by dividing the counts-per-revolution of your encoder by the circumference of the wheel.
      *
      * @param ticks_per_mm should be somewhere between 10 ticks/mm and 100 ticks/mm a goBILDA Swingarm pod is ~13.26291192
      */
-    public void setEncoderResolution(double ticks_per_mm) {
-        super.setEncoderResolution(ticks_per_mm);
-        currentTicksPerMM = (float) ticks_per_mm;
+    override fun setEncoderResolution(ticks_per_mm: Double) {
+        super.setEncoderResolution(ticks_per_mm)
+        currentTicksPerMM = ticks_per_mm.toFloat()
     }
 
 
     /**
      * Added by j5155 (comments from Gobilda)
+     *
+     *
      * Send a position that the Pinpoint should use to track your robot relative to. You can use this to
      * update the estimated position of your robot with new external sensor data, or to run a robot
-     * in field coordinates. <br><br>
-     * This overrides the current position. <br><br>
-     * <strong>Using this feature to track your robot's position in field coordinates:</strong> <br>
-     * When you start your code, send a Pose2D that describes the starting position on the field of your robot. <br>
+     * in field coordinates.
+     *
+     * This overrides the current position.
+     *
+     * **Using this feature to track your robot's position in field coordinates:**
+     *
+     * When you start your code, send a Pose2D that describes the starting position on the field of your robot.
      * Say you're on the red alliance, your robot is against the wall and closer to the audience side,
      * and the front of your robot is pointing towards the center of the field.
      * You can send a setPosition with something like -600mm x, -1200mm Y, and 90 degrees. The pinpoint would then always
-     * keep track of how far away from the center of the field you are. <br><br>
-     * <strong>Using this feature to update your position with additional sensors: </strong><br>
+     * keep track of how far away from the center of the field you are.
+     *
+     *
+     * **Using this feature to update your position with additional sensors:**
+     *
      * Some robots have a secondary way to locate their robot on the field. This is commonly
      * Apriltag localization in FTC, but it can also be something like a distance sensor.
      * Often these external sensors are absolute (meaning they measure something about the field)
@@ -105,23 +108,40 @@ public class GoBildaPinpointDriverRR extends GoBildaPinpointDriver {
      *
      * @param pos a Pose2D describing the robot's new position.
      */
-    public Pose2d setPosition(Pose2d pos) {
-        setPosition(new Pose2D(DistanceUnit.INCH, pos.position.x, pos.position.y, AngleUnit.RADIANS, pos.heading.toDouble()));
-        return pos;
+    fun setPosition(pos: Pose2d): Pose2d {
+        setPosition(
+            Pose2D(
+                DistanceUnit.INCH,
+                pos.position.x,
+                pos.position.y,
+                AngleUnit.RADIANS,
+                pos.heading.toDouble()
+            )
+        )
+        return pos
     }
 
     /**
      * Added by j5155
-     *
-     * @return a Roadrunner Pose2D containing the estimated position of the robot
+     * A Roadrunner Pose2D containing the estimated position of the robot
+     * Getting reads the cached position since the last update
+     * Setting writes the new position to the Pinpoint immediately
      */
-    public Pose2d getPositionRR() {
-        Pose2D ftcPose = getPosition();
-        return new Pose2d(
-                ftcPose.getX(DistanceUnit.INCH),
-                ftcPose.getY(DistanceUnit.INCH),
-                ftcPose.getHeading(AngleUnit.RADIANS));
-    }
+    var positionRR: Pose2d
+        get() = Pose2d(
+            position.getX(DistanceUnit.INCH),
+            position.getY(DistanceUnit.INCH),
+            position.getHeading(AngleUnit.RADIANS)
+        )
+        set(newPose) {
+            position = Pose2D(
+                DistanceUnit.INCH,
+                newPose.position.x,
+                newPose.position.y,
+                AngleUnit.RADIANS,
+                newPose.heading.toDouble()
+            )
+        }
 
 
     /**
@@ -129,18 +149,16 @@ public class GoBildaPinpointDriverRR extends GoBildaPinpointDriver {
      *
      * @return a Roadrunner PoseVelocity2D containing the estimated velocity of the robot, velocity is unit per second
      */
-    public PoseVelocity2d getVelocityRR() {
-        Pose2D ftcVelocity = getVelocity();
-        return new PoseVelocity2d(
-                new Vector2d(
-                        ftcVelocity.getX(DistanceUnit.INCH),
-                        ftcVelocity.getY(DistanceUnit.INCH)
-                ),
-                ftcVelocity.getHeading(AngleUnit.RADIANS)
-        );
-    }
-
+    val velocityRR: PoseVelocity2d
+        get() = PoseVelocity2d(
+            Vector2d(
+                velocity.getX(DistanceUnit.INCH),
+                velocity.getY(DistanceUnit.INCH)
+            ),
+            velocity.getHeading(AngleUnit.RADIANS)
+        )
 }
+
 
 
 
