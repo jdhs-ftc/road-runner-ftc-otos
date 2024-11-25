@@ -167,7 +167,7 @@ class GoBildaPinpointDriverRR(deviceClient: I2cDeviceSynchSimple, deviceClientIs
         )
 
 
-    // IMU implementation (untested)
+    // IMU implementation (untested, does not update in itself (that might cause problems))
 
     /**
      * Does nothing
