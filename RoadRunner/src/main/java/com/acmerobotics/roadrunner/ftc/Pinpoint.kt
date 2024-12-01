@@ -21,8 +21,12 @@ class PinpointEncoder( // TODO test
         pinpoint.update()
         val absPose = pinpoint.positionRR
         val absVel = pinpoint.velocityRR
-        val rotatedPosVector = absPose.heading.times(absPose.position)
-        val rotatedVelVector = absPose.heading.times(absVel.linearVel)
+        /*
+        val rotatedPosVector = absPose.heading.inverse().times(absPose.position) // this doesn't work btw, not sure why
+        val rotatedVelVector = absPose.heading.inverse().times(absVel.linearVel)
+        */
+        val rotatedPosVector = absPose.position
+        val rotatedVelVector = absVel.linearVel
         val pos: Double
         val vel: Double
 
