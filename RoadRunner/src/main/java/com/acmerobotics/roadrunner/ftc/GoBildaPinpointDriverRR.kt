@@ -220,7 +220,7 @@ class GoBildaPinpointDriverRR(deviceClient: I2cDeviceSynchSimple, deviceClientIs
             AngleUnit.RADIANS,
             0.0f,
             0.0f,
-            velocity.getHeading(AngleUnit.RADIANS).toFloat(),
+            headingVelocity.toFloat(),
             System.nanoTime()
         ).toAngleUnit(angleUnit)
     }
