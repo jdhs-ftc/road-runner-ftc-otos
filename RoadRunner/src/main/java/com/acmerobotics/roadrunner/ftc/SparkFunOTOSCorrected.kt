@@ -1,14 +1,19 @@
 package com.acmerobotics.roadrunner.ftc
 
+import com.acmerobotics.roadrunner.Pose2d
+import com.acmerobotics.roadrunner.PoseVelocity2d
+import com.acmerobotics.roadrunner.Vector2d
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch
 import com.qualcomm.robotcore.hardware.IMU
 import com.qualcomm.robotcore.hardware.configuration.annotations.DeviceProperties
 import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType
+import com.qualcomm.robotcore.util.RobotLog
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation
 import org.firstinspires.ftc.robotcore.external.navigation.Quaternion
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles
@@ -22,7 +27,8 @@ import kotlin.math.sin
     xmlTag = "SparkFunOTOS2",
     description = "SparkFun Qwiic Optical Tracking Odometry Sensor Corrected"
 )
-class SparkFunOTOSCorrected(deviceClient: I2cDeviceSynch) : SparkFunOTOS(deviceClient), IMU {
+class SparkFunOTOSCorrected(deviceClient: I2cDeviceSynch) : SparkFunOTOS(deviceClient), IMU,
+    LocalizationSensor {
     /**
      * Gets only the position and velocity measured by the
      * OTOS in a single burst read
@@ -87,6 +93,41 @@ class SparkFunOTOSCorrected(deviceClient: I2cDeviceSynch) : SparkFunOTOS(deviceC
 
     override fun getRobotAngularVelocity(angleUnit: AngleUnit): AngularVelocity {
         return AngularVelocity(angularUnit, 0.0f,0.0f,velocity.h.toFloat(),System.nanoTime()).toAngleUnit(angleUnit)
+    }
+
+
+    /** Cached pose since last read */
+    override var pose = Pose2d(0.0, 0.0, 0.0)
+
+    /** Cached velocity since last read */
+    override var vel = PoseVelocity2d(Vector2d(0.0, 0.0), 0.0)
+
+    /** Read the sensor to update pose and vel (will be run every loop) */
+    override fun updatePoseVel() {
+        var newPos = Pose2D()
+        var newVel = Pose2D()
+        getPosVel(newPos, newVel)
+        pose = Pose2d(newPos.x, newPos.y, newPos.h)
+        vel = PoseVelocity2d(Vector2d(newVel.x, newVel.y), newVel.h)
+    }
+
+    /** Write an updated pose to the sensor */
+    override fun setPose(pose: Pose2d) {
+        this.pose = pose
+        position = Pose2D(pose.position.x, pose.position.y, pose.heading.toDouble())
+    }
+
+
+    override fun baseInitialize() {
+        // set units to match roadrunner
+        linearUnit = DistanceUnit.INCH
+        angularUnit = AngleUnit.RADIANS
+
+        // calibrate imu
+        val imuCalibrationSucceeded = calibrateImu()
+        if (!imuCalibrationSucceeded) { // this is literally ignored by default :sob:
+            RobotLog.addGlobalWarningMessage("OTOS IMU calibration failed!")
+        }
     }
 }
 

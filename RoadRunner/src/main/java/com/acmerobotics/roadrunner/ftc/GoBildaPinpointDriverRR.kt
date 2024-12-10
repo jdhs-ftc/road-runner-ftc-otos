@@ -25,7 +25,6 @@ import com.acmerobotics.roadrunner.Pose2d
 import com.acmerobotics.roadrunner.PoseVelocity2d
 import com.acmerobotics.roadrunner.Rotation2d
 import com.acmerobotics.roadrunner.Vector2d
-import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriver.GoBildaOdometryPods
 import com.qualcomm.robotcore.hardware.I2cDeviceSynchSimple
 import com.qualcomm.robotcore.hardware.IMU
 import com.qualcomm.robotcore.hardware.configuration.annotations.DeviceProperties
@@ -47,7 +46,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles
     description = "goBILDA® Pinpoint Odometry Computer (IMU Sensor Fusion for 2 Wheel Odometry)"
 )
 class GoBildaPinpointDriverRR(deviceClient: I2cDeviceSynchSimple, deviceClientIsOwned: Boolean) :
-    GoBildaPinpointDriver(deviceClient, deviceClientIsOwned), IMU {
+    GoBildaPinpointDriver(deviceClient, deviceClientIsOwned), IMU, LocalizationSensor {
     var currentTicksPerMM = 0f
 
     companion object {
@@ -223,6 +222,47 @@ class GoBildaPinpointDriverRR(deviceClient: I2cDeviceSynchSimple, deviceClientIs
             headingVelocity.toFloat(),
             System.nanoTime()
         ).toAngleUnit(angleUnit)
+    }
+
+    /** Cached pose since last read */
+    override var pose = Pose2d(0.0, 0.0, 0.0)
+
+    /** Cached velocity since last read */
+    override var vel = PoseVelocity2d(Vector2d(0.0, 0.0), 0.0)
+
+    /** Read the sensor to update pose and vel (will be run every loop) */
+    override fun updatePoseVel() {
+        update()
+        pose = Pose2d(
+            position.getX(DistanceUnit.INCH),
+            position.getY(DistanceUnit.INCH),
+            position.getHeading(AngleUnit.RADIANS)
+        )
+        vel = PoseVelocity2d(
+            Vector2d(
+                velocity.getX(DistanceUnit.INCH),
+                velocity.getY(DistanceUnit.INCH)
+            ),
+            headingVelocity
+        )
+    }
+
+    /** Write an updated pose to the sensor */
+    override fun setPose(pose: Pose2d) {
+        position = Pose2D(
+            DistanceUnit.INCH,
+            pose.position.x,
+            pose.position.y,
+            AngleUnit.RADIANS,
+            pose.heading.toDouble()
+        )
+    }
+
+    override fun baseInitialize() {
+        recalibrateIMU()
+        while (deviceStatus == DeviceStatus.CALIBRATING) {
+            update()
+        }
     }
 }
 
