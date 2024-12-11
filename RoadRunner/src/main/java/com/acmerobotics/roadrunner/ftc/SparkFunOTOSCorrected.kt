@@ -112,7 +112,7 @@ class SparkFunOTOSCorrected(deviceClient: I2cDeviceSynch) : SparkFunOTOS(deviceC
     }
 
     /** Write an updated pose to the sensor */
-    override fun setPose(pose: Pose2d) {
+    override fun writePose(pose: Pose2d) {
         this.pose = pose
         position = Pose2D(pose.position.x, pose.position.y, pose.heading.toDouble())
     }

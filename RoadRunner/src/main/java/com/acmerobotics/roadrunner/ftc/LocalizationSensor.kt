@@ -14,7 +14,7 @@ interface LocalizationSensor {
     fun updatePoseVel()
 
     /** Write an updated pose to the sensor and to the cached value */
-    fun setPose(pose: Pose2d)
+    fun writePose(pose: Pose2d)
 
     /** Initialize common/base aspects of the sensor, like setting the units and calibrating the IMU.
      *

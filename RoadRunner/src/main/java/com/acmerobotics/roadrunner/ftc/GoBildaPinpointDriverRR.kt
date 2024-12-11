@@ -248,7 +248,7 @@ class GoBildaPinpointDriverRR(deviceClient: I2cDeviceSynchSimple, deviceClientIs
     }
 
     /** Write an updated pose to the sensor */
-    override fun setPose(pose: Pose2d) {
+    override fun writePose(pose: Pose2d) {
         position = Pose2D(
             DistanceUnit.INCH,
             pose.position.x,
