@@ -5,10 +5,10 @@ import com.acmerobotics.roadrunner.PoseVelocity2d
 
 interface LocalizationSensor {
     /** Cached pose since last read */
-    var pose: Pose2d
+    var cachedPose: Pose2d
 
     /** Cached velocity since last read */
-    var vel: PoseVelocity2d
+    var cachedVel: PoseVelocity2d
 
     /** Read the sensor to update pose and vel (will be run every loop) */
     fun updatePoseVel()

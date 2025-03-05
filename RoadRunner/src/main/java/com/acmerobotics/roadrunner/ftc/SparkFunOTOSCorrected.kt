@@ -97,23 +97,23 @@ class SparkFunOTOSCorrected(deviceClient: I2cDeviceSynch) : SparkFunOTOS(deviceC
 
 
     /** Cached pose since last read */
-    override var pose = Pose2d(0.0, 0.0, 0.0)
+    override var cachedPose = Pose2d(0.0, 0.0, 0.0)
 
     /** Cached velocity since last read */
-    override var vel = PoseVelocity2d(Vector2d(0.0, 0.0), 0.0)
+    override var cachedVel = PoseVelocity2d(Vector2d(0.0, 0.0), 0.0)
 
     /** Read the sensor to update pose and vel (will be run every loop) */
     override fun updatePoseVel() {
         var newPos = Pose2D()
         var newVel = Pose2D()
         getPosVel(newPos, newVel)
-        pose = Pose2d(newPos.x, newPos.y, newPos.h)
-        vel = PoseVelocity2d(Vector2d(newVel.x, newVel.y), newVel.h)
+        cachedPose = Pose2d(newPos.x, newPos.y, newPos.h)
+        cachedVel = PoseVelocity2d(Vector2d(newVel.x, newVel.y), newVel.h)
     }
 
     /** Write an updated pose to the sensor */
     override fun writePose(pose: Pose2d) {
-        this.pose = pose
+        this.cachedPose = pose
         position = Pose2D(pose.position.x, pose.position.y, pose.heading.toDouble())
     }
 

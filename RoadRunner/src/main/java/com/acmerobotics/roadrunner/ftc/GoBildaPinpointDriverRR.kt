@@ -46,7 +46,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles
     description = "goBILDA® Pinpoint Odometry Computer (IMU Sensor Fusion for 2 Wheel Odometry)"
 )
 class GoBildaPinpointDriverRR(deviceClient: I2cDeviceSynchSimple, deviceClientIsOwned: Boolean) :
-    GoBildaPinpointDriver(deviceClient, deviceClientIsOwned), IMU, LocalizationSensor {
+    GoBildaPinpointDriver(deviceClient, deviceClientIsOwned), IMU, LocalizationSensorIMU { // TODO remove current IMU implementation
     var currentTicksPerMM = 0f
 
     companion object {
@@ -225,20 +225,20 @@ class GoBildaPinpointDriverRR(deviceClient: I2cDeviceSynchSimple, deviceClientIs
     }
 
     /** Cached pose since last read */
-    override var pose = Pose2d(0.0, 0.0, 0.0)
+    override var cachedPose = Pose2d(0.0, 0.0, 0.0)
 
     /** Cached velocity since last read */
-    override var vel = PoseVelocity2d(Vector2d(0.0, 0.0), 0.0)
+    override var cachedVel = PoseVelocity2d(Vector2d(0.0, 0.0), 0.0)
 
     /** Read the sensor to update pose and vel (will be run every loop) */
     override fun updatePoseVel() {
         update()
-        pose = Pose2d(
+        cachedPose = Pose2d(
             position.getX(DistanceUnit.INCH),
             position.getY(DistanceUnit.INCH),
             position.getHeading(AngleUnit.RADIANS)
         )
-        vel = PoseVelocity2d(
+        cachedVel = PoseVelocity2d(
             Vector2d(
                 velocity.getX(DistanceUnit.INCH),
                 velocity.getY(DistanceUnit.INCH)
@@ -260,6 +260,7 @@ class GoBildaPinpointDriverRR(deviceClient: I2cDeviceSynchSimple, deviceClientIs
 
     override fun baseInitialize() {
         recalibrateIMU()
+        update()
         while (deviceStatus == DeviceStatus.CALIBRATING) {
             update()
         }

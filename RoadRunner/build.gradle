@@ -3,7 +3,7 @@ buildscript {
     ext.min_rr_version = "1.0.0-beta6"
     ext.min_dash_version = "0.4.10"
     ext.rr_ftc_version = "0.1.14"
-    ext.otos_version = "0.1.2"
+    ext.otos_version = "0.2.0.13-SNAPSHOT"
 }
 
 plugins {
@@ -160,7 +160,7 @@ project.afterEvaluate {
 
                 groupId = "page.j5155.roadrunner"
                 artifactId = "ftc-otos"
-                version "$otos_version+$rr_ftc_version"
+                version "$rr_ftc_version+$otos_version"
 
                 pom {
                     description = "FTC utilities for Road Runner w/ OTOS and Pinpoint support"
